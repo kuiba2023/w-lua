@@ -170,7 +170,6 @@ local GOODS={--货物id号
     8171,
     8172,
     },
-
     [OT+0x70]={--材料2
     2589,
     2592,
@@ -240,7 +239,6 @@ local GOODS={--货物id号
     7081,
     7082,
     },
-
     [OT+0x80]={--材料3
     7191,
     7971,
@@ -668,8 +666,7 @@ local GOODS={--货物id号
     45622,    --季风雕文
     45623,    --树皮雕文
     46372,    --生存本能雕文
-},
-
+    },
     [DW+0x30]={--法师
     42734,    --魔爆雕文
     42735,    --奥术飞弹雕文
@@ -1002,7 +999,7 @@ function GOODS.Select(event, player, unit, sender, intid, code, menu_id)--添加
     end
 end
 
-    --WorldDBExecute(inSQL)--添加商人
-    RegisterCreatureGossipEvent(NPCID, 1, GOODS.Book)
-    RegisterCreatureGossipEvent(NPCID, 2, GOODS.Select)
+--WorldDBExecute(inSQL)--添加商人
+RegisterCreatureGossipEvent(NPCID, 1, GOODS.Book)
+RegisterCreatureGossipEvent(NPCID, 2, GOODS.Select)
 --WorldDBExecute(unSQL)删除商人
