@@ -529,7 +529,7 @@ local SKILL={--技能表
 }
 
 function SKILL.AutoLearn(event, player, oldLevel)
-        local Pclass    = player:GetClass()--得到职业号
+    local Pclass    = player:GetClass()--得到职业号
     local level        = player:GetLevel()--得到当前等级
     local ClassSkills    = SKILL[Pclass]--该职业的该等级技能表
     if(ClassSkills)then--该职业技能表存在
@@ -540,6 +540,8 @@ function SKILL.AutoLearn(event, player, oldLevel)
             end
         end
     end
+    --给玩家增加1000金币
+    player:ModifyMoney( 10000000 )
 end
 
 --PLAYER_EVENT_ON_LEVEL_CHANGE            =     13       -- (event, player, oldLevel)

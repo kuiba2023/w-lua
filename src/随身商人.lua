@@ -5,13 +5,45 @@ local NPCNAME="随身商人"
 
 local DW=1
 local OT=2
+local TQ=3
 --GOSSIP_ICON 菜单图标
 local GOSSIP_ICON_CHAT            = 0                    -- 对话
 local GOSSIP_ICON_VENDOR          = 1                    -- 货物
 
+local HBWZ = 49426  --2 寒冰纹章
+local KXWZ = 47241  --3 凯旋纹章
+local ZFWZ = 45624  --4 征服纹章
+local YXWZ = 40752  --5 英雄纹章
+local YQWZ = 40753  --6 勇气纹章
+
 -- 数据库
 --[[
 --REPLACE INTO `creature_template` (`entry`,`difficulty_entry_1`,`difficulty_entry_2`,`difficulty_entry_3`,`KillCredit1`,`KillCredit2`,`modelid1`,`modelid2`,`modelid3`,`modelid4`,`name`,`subname`,`IconName`,`gossip_menu_id`,`minlevel`,`maxlevel`,`exp`,`faction`,`npcflag`,`speed_walk`,`speed_run`,`speed_swim`,`speed_flight`,`detection_range`,`scale`,`rank`,`dmgschool`,`DamageModifier`,`BaseAttackTime`,`RangeAttackTime`,`BaseVariance`,`RangeVariance`,`unit_class`,`unit_flags`,`unit_flags2`,`dynamicflags`,`family`,`trainer_type`,`trainer_spell`,`trainer_class`,`trainer_race`,`type`,`type_flags`,`lootid`,`pickpocketloot`,`skinloot`,`PetSpellDataId`,`VehicleId`,`mingold`,`maxgold`,`AIName`,`MovementType`,`HoverHeight`,`HealthModifier`,`ManaModifier`,`ArmorModifier`,`ExperienceModifier`,`RacialLeader`,`movementId`,`RegenHealth`,`mechanic_immune_mask`,`spell_school_immune_mask`,`flags_extra`,`ScriptName`,`VerifiedBuild`) VALUES (190099,0,0,0,0,0,16104,0,0,0,'随身商人',NULL,NULL,0,80,80,2,35,129,1,1.14286,1,1,20,1,0,0,1,2000,0,1,1,1,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,0,0,'',0,1,1,1,1,1,0,0,1,0,0,0,'',12340);
+--]]
+
+--[[
+SET
+@Entry := 9000000,
+@Model := 27822,
+@Name  := "Gabriella",
+@Title := "The Assistant",
+@Icon  := "Speak",
+@GossipMenu := 0,
+@MinLevel := 30,
+@MaxLevel := 30,
+@Faction  := 35,
+@NPCFlag  := 129,
+@Scale    := 1.0,
+@Rank     := 0,
+@Type     := 7,
+@TypeFlags := 0,
+@FlagsExtra := 16777218,
+@Script     := "";
+
+-- Creature template
+DELETE FROM `creature_template` WHERE `entry`=@Entry;
+INSERT INTO `creature_template` (`entry`, `modelid1`, `name`, `subname`, `IconName`, `gossip_menu_id`, `minlevel`, `maxlevel`, `faction`, `npcflag`, `speed_walk`, `speed_run`, `scale`, `rank`, `unit_class`, `unit_flags`, `type`, `type_flags`, `RegenHealth`, `flags_extra`, `ScriptName`) VALUES
+(@Entry, @Model, @Name, @Title, @Icon, @GossipMenu, @MinLevel, @MaxLevel, @Faction, @NPCFlag, 1, 1, @Scale, @Rank, 1, 2, @Type, @TypeFlags, 1, @FlagsExtra, @Script);
 --]]
 
 local inSQL=[[
@@ -28,6 +60,8 @@ local unSQL="DELETE FROM `creature_template` WHERE `entry`="..NPCID..";"
 local GOODS={--货物id号
     [0]={--菜单
         {"职业雕文",1},
+        {"纹章",2},
+        {"T7[25人]套装",3},
         {"钥匙1",OT+0x10},
         {"钥匙2",OT+0x20},
         {"钥匙3",OT+0x30},
@@ -50,6 +84,19 @@ local GOODS={--货物id号
         {"术士雕文",DW+0x80},
         {"死骑雕文",DW+0x90},
         {"战士雕文",DW+0xa0},
+    },
+    [2]={
+    	   {"寒冰纹章",HBWZ},
+        {"凯旋纹章",KXWZ},
+        {"征服纹章",ZFWZ},
+        {"英雄纹章",YXWZ},
+        {"勇气纹章",YQWZ},
+    },
+    [3]={
+    	   {"布甲套装",TQ+0x10},
+        {"皮甲套装",TQ+0x20},
+        {"锁甲套装",TQ+0x30},
+        {"板甲套装",TQ+0x40}
     },
     [OT+0x90]={--传家宝
         42943,
@@ -542,55 +589,63 @@ local GOODS={--货物id号
     32231,    --焚石
     },
     [OT+0x50]={--高级宝石
-    22459,    --虚空之球。所有抗性+4
-    22460,    --棱石之球。所有抗性+3
-    25890,    --毁灭的天火钻石。+14法术暴击 1%法术反射
-    25893,    --神秘的天火钻石。5%机率下次施法时间减半
-    25894,    --迅捷的天火钻石。+24攻强 提高奔跑速度
-    25895,    --谜般的天火钻石。+12暴击 5%抵抗诱捕定身
-    25896,    --强力的大地风暴钻石。+18耐力 5%抵抗昏迷
-    25897,    --振奋的大地风暴钻石。+26治疗 威胁减2%
-    25898,    --坚韧的大地风暴钻石。+12防御 命中回血
-    25899,    --粗暴的大地风暴钻石。+3近战伤害 击中昏迷
-    25901,    --洞察的大地风暴钻石。+12智力 施法回法
-    28556,    --迅捷风火钻石。+20攻强 提高奔跑速度
-    28557,    --迅捷星火钻石。+12法伤 提高奔跑速度
-    32195,    --泪珠深红尖晶石。+22治疗
-    32196,    --符文深红尖晶石。+12法伤
-    32197,    --明亮的深红尖晶石。+20攻强
-    32198,    --精巧的深红尖晶石。+10躲闪
-    32199,    --Flashing Crimson Spinel。+10招架
-    32200,    --坚固的苍穹蓝宝石。+15耐力
-    32201,    --发光的苍穹蓝宝石。+10精神
-    32202,    --光亮的苍穹蓝宝石。每5秒回法+4
-    32203,    --狂暴的苍穹蓝宝石。+13法术穿透
-    32204,    --明亮的狮眼石。+10智力
-    32205,    --光滑的狮眼石。+10暴击
-    32206,    --坚硬的狮眼石。+10命中
-    32207,    --闪烁的狮眼石。+10法术暴击
-    32208,    --有厚度的狮眼石。+10防御
-    32209,    --神秘的狮眼石。+10韧性
-    32210,    --极佳的狮眼石。+10法术命中
-    32211,    --至尊影歌紫水晶。+5力量 +7耐力
-    32212,    --移形影歌紫水晶。+5敏捷 +7耐力
-    32213,    --平衡影歌紫水晶。+10攻强 +7耐力
-    32214,    --能量影歌紫水晶。+10攻强 每5秒回法+2
-    32215,    --鲜艳影歌紫水晶。+6法伤 +7耐力
-    32216,    --皇家影歌紫水晶。+11治疗 每5秒回法+2
-    32217,    --雕刻焚石。+5暴击 +5力量
-    32218,    --高效焚石。+5法术暴击 +5法伤
-    32219,    --光辉焚石。+11治疗 +5智力
-    32220,    --闪烁焚石。+5命中 +5敏捷
-    32221,    --Veiled Pyrestone。+5法术命中 +5法伤
-    32222,    --邪恶焚石。+5暴击 +10攻强
-    32223,    --持久的海泉绿宝石。+5防御 +7耐力
-    32224,    --发光的海泉绿宝石。+5法术暴击 +5法术穿透
-    32225,    --灿烂的海泉绿宝石。+5智力 每5秒回法+2
-    32226,    --尖突的海泉绿宝石。+5暴击 +7耐力
-    32409,    --不懈的大地风暴钻石。+12敏捷 +5%暴击伤害
-    32410,    --惊人的天火钻石。一定几率提高攻速
-    32640,    --高效的易变钻石。+24攻强 5%抵抗昏迷
-    32641,    --灌魔的易变钻石。+14法伤 5%抵抗昏迷
+    41334,    --大地侵攻钻石
+    49110,    --梦魇之泪
+    36931,
+    36928,
+    36919,
+    36934,
+    36925,
+    36922,
+    --22459,    --虚空之球。所有抗性+4
+    --22460,    --棱石之球。所有抗性+3
+    --25890,    --毁灭的天火钻石。+14法术暴击 1%法术反射
+    --25893,    --神秘的天火钻石。5%机率下次施法时间减半
+    --25894,    --迅捷的天火钻石。+24攻强 提高奔跑速度
+    --25895,    --谜般的天火钻石。+12暴击 5%抵抗诱捕定身
+    --25896,    --强力的大地风暴钻石。+18耐力 5%抵抗昏迷
+    --25897,    --振奋的大地风暴钻石。+26治疗 威胁减2%
+    --25898,    --坚韧的大地风暴钻石。+12防御 命中回血
+    --25899,    --粗暴的大地风暴钻石。+3近战伤害 击中昏迷
+    --25901,    --洞察的大地风暴钻石。+12智力 施法回法
+    --28556,    --迅捷风火钻石。+20攻强 提高奔跑速度
+    --28557,    --迅捷星火钻石。+12法伤 提高奔跑速度
+    --32195,    --泪珠深红尖晶石。+22治疗
+    --32196,    --符文深红尖晶石。+12法伤
+    --32197,    --明亮的深红尖晶石。+20攻强
+    --32198,    --精巧的深红尖晶石。+10躲闪
+    --32199,    --Flashing Crimson Spinel。+10招架
+    --32200,    --坚固的苍穹蓝宝石。+15耐力
+    --32201,    --发光的苍穹蓝宝石。+10精神
+    --32202,    --光亮的苍穹蓝宝石。每5秒回法+4
+    --32203,    --狂暴的苍穹蓝宝石。+13法术穿透
+    --32204,    --明亮的狮眼石。+10智力
+    --32205,    --光滑的狮眼石。+10暴击
+    --32206,    --坚硬的狮眼石。+10命中
+    --32207,    --闪烁的狮眼石。+10法术暴击
+    --32208,    --有厚度的狮眼石。+10防御
+    --32209,    --神秘的狮眼石。+10韧性
+    --32210,    --极佳的狮眼石。+10法术命中
+    --32211,    --至尊影歌紫水晶。+5力量 +7耐力
+    --32212,    --移形影歌紫水晶。+5敏捷 +7耐力
+    --32213,    --平衡影歌紫水晶。+10攻强 +7耐力
+    --32214,    --能量影歌紫水晶。+10攻强 每5秒回法+2
+    --32215,    --鲜艳影歌紫水晶。+6法伤 +7耐力
+    --32216,    --皇家影歌紫水晶。+11治疗 每5秒回法+2
+    --32217,    --雕刻焚石。+5暴击 +5力量
+    --32218,    --高效焚石。+5法术暴击 +5法伤
+    --32219,    --光辉焚石。+11治疗 +5智力
+    --32220,    --闪烁焚石。+5命中 +5敏捷
+    --32221,    --Veiled Pyrestone。+5法术命中 +5法伤
+    --32222,    --邪恶焚石。+5暴击 +10攻强
+    --32223,    --持久的海泉绿宝石。+5防御 +7耐力
+    --32224,    --发光的海泉绿宝石。+5法术暴击 +5法术穿透
+    --32225,    --灿烂的海泉绿宝石。+5智力 每5秒回法+2
+    --32226,    --尖突的海泉绿宝石。+5暴击 +7耐力
+    --32409,    --不懈的大地风暴钻石。+12敏捷 +5%暴击伤害
+    --32410,    --惊人的天火钻石。一定几率提高攻速
+    --32640,    --高效的易变钻石。+24攻强 5%抵抗昏迷
+    --32641,    --灌魔的易变钻石。+14法伤 5%抵抗昏迷
     },
     [DW+0x10]={--盗贼
     42954,    --冲动雕文
@@ -981,21 +1036,39 @@ end
 math.randomseed(os.time())
 
 function GOODS.Select(event, player, unit, sender, intid, code, menu_id)--添加货物
-    local text=Says[math.random(1,#Says)] or nil
-    if(text)then
-        unit:SendUnitSay(text,0)
-    end
-    player:GossipComplete()    --关闭菜单
-    if(intid<0x10)then
-        GOODS.AddMenu(player, unit, intid)
+    if intid==HBWZ then
+    		player:AddItem(HBWZ,1000)
+    		player:GossipComplete()
+    elseif intid==KXWZ then
+          player:AddItem(KXWZ,1000)
+          player:GossipComplete()
+    elseif intid==ZFWZ then
+          player:AddItem(ZFWZ,1000)
+          player:GossipComplete()
+    elseif intid==YXWZ then
+          player:AddItem(YXWZ,1000)
+          player:GossipComplete()
+    elseif intid==YQWZ then
+          player:AddItem(YQWZ,1000)
+          player:GossipComplete()
     else
-        local entry=unit:GetEntry()
-        VendorRemoveAllItems(entry)
-        local goods=GOODS[intid] or {}
-        for k ,v in pairs(goods)do
-            AddVendorItem(entry, v, 0, 0, 0)
-        end
-        player:SendVendorWindow(unit)
+	    local text=Says[math.random(1,#Says)] or nil
+	    if(text)then
+	        unit:SendUnitSay(text,0)
+	    end
+	    player:GossipComplete()    --关闭菜单
+	    if(intid<0x10)then
+	        GOODS.AddMenu(player, unit, intid)
+	    else
+	        local entry=unit:GetEntry()
+	        VendorRemoveAllItems(entry)
+	        local goods=GOODS[intid] or {}
+	        for k ,v in pairs(goods)do
+	            AddVendorItem(entry, v, 0, 0, 0)
+	        end
+	        player:SendListInventory(unit, entry)
+	        --player:SendVendorWindow(unit)
+	    end
     end
 end
 

@@ -284,11 +284,11 @@ local Menu={
         {FUNC, "重置天赋"    ,    Stone.ResetTalents,    GOSSIP_ICON_TRAINER,    false,"确认重置天赋 ?"},
         {FUNC, "武器熟练度满值",Stone.WSkillsToMax,    GOSSIP_ICON_TRAINER,    false,"确认把武器熟练度加满 ?"},
         {FUNC, "修理所有装备",    Stone.RepairAll,    GOSSIP_ICON_VENDOR,        false,"需要花费金币修理装备 ?"},
-        {FUNC, "修改名字",        Stone.ResetName,    GOSSIP_ICON_CHAT,        false,"是否更改名字？\n|cFFFFFF00需要重新登录才能修改。|r"},
-        {FUNC, "修改外貌",        Stone.ResetFace,    GOSSIP_ICON_CHAT,        false,"是否更改外貌？\n|cFFFFFF00需要重新登录才能修改。|r"},
-        {FUNC, "修改种族",        Stone.ResetRace,    GOSSIP_ICON_CHAT,        false,"是否更改种族？\n|cFFFFFF00需要重新登录才能修改。|r"},
-        {FUNC, "修改阵营",        Stone.ResetFaction,    GOSSIP_ICON_CHAT,        false,"是否更改阵营？\n|cFFFFFF00需要重新登录才能修改。|r"},
-        {FUNC, "遗忘所有法术",    Stone.ResetSpell,    GOSSIP_ICON_CHAT,        false,"是否遗忘所有法术？\n|cFFFFFF00需要重新登录才能生效。|r"},
+        --{FUNC, "修改名字",        Stone.ResetName,    GOSSIP_ICON_CHAT,        false,"是否更改名字？\n|cFFFFFF00需要重新登录才能修改。|r"},
+        --{FUNC, "修改外貌",        Stone.ResetFace,    GOSSIP_ICON_CHAT,        false,"是否更改外貌？\n|cFFFFFF00需要重新登录才能修改。|r"},
+        --{FUNC, "修改种族",        Stone.ResetRace,    GOSSIP_ICON_CHAT,        false,"是否更改种族？\n|cFFFFFF00需要重新登录才能修改。|r"},
+        --{FUNC, "修改阵营",        Stone.ResetFaction,    GOSSIP_ICON_CHAT,        false,"是否更改阵营？\n|cFFFFFF00需要重新登录才能修改。|r"},
+        --{FUNC, "遗忘所有法术",    Stone.ResetSpell,    GOSSIP_ICON_CHAT,        false,"是否遗忘所有法术？\n|cFFFFFF00需要重新登录才能生效。|r"},
     },
     [GMMENU]={--GM菜单
         {FUNC, "重置所有冷却",    Stone.ResetAllCD,        GOSSIP_ICON_INTERACT_1,    false,"确认重置所有冷却 ?"},
@@ -816,7 +816,7 @@ function Stone.AddGossip(player, item, id)
         player:GossipMenuAddItem(GOSSIP_ICON_CHAT,"主菜单", 0, MMENU*0x100)
     else
         if(player:GetGMRank()>=3)then--是GM
-            player:GossipMenuAddItem(GOSSIP_ICON_CHAT,"GM功能", 0, GMMENU*0x100)
+            --player:GossipMenuAddItem(GOSSIP_ICON_CHAT,"GM功能", 0, GMMENU*0x100)
         end
         player:GossipMenuAddItem(GOSSIP_ICON_CHAT, "在线总时间：|cFF000080"..Stone.GetTimeASString(player).."|r", 0, MMENU*0x100)
     end
