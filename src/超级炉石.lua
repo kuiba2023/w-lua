@@ -148,6 +148,9 @@ local Stone={
         local x,y,z,mapId,areaId=player:GetX(),player:GetY(),player:GetZ(),player:GetMapId(),player:GetAreaId()
         player:SetBindPoint(x,y,z,mapId,areaId)
         player:SendBroadcastMessage("已经设置当前位置为家")
+        if player:GetGMRank() >= 3 then--是GM
+        	player:SendBroadcastMessage("当前X坐标="..x..",Y坐标="..y..",Z坐标="..z..",地图ID="..mapId..",区域ID="..areaId)
+	   end
     end,
 
     OpenBank=function(player)--打开银行
@@ -825,8 +828,13 @@ function Stone.AddGossip(player, item, id)
 end
 
 function Stone.ShowGossip(event, player, item)
-    player:MoveTo(0,player:GetX(),player:GetY(),player:GetZ()+0.01)--移动就停止当前施法
-    Stone.AddGossip(player, item, MMENU)
+    --player:MoveTo(0,player:GetX(),player:GetY(),player:GetZ()+0.01)--移动就停止当前施法
+    --Stone.AddGossip(player, item, MMENU)
+    if (player:IsInCombat()) then
+		return false
+	end
+	Stone.AddGossip(player, item, MMENU)
+	return false
 end
 
 function Stone.SelectGossip(event, player, item, sender, intid, code, menu_id)
